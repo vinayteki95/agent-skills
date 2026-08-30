@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Conventional-commit-ish check without a Node dependency.
+# Format: type(scope)?: subject   e.g. feat(journey): add range chart
+set -euo pipefail
+MSG_FILE="$1"
+FIRST_LINE="$(head -n1 "$MSG_FILE")"
+# Allow merge/revert commits.
+case "$FIRST_LINE" in Merge*|Revert*) exit 0;; esac
+if echo "$FIRST_LINE" | grep -qE '^(feat|fix|docs|chore|refactor|test|perf|build|ci|style)(\([a-z0-9-]+\))?!?: .+'; then
+  exit 0
+fi
+echo "Invalid commit message: '$FIRST_LINE'"
+echo "Use: type(scope): subject  (types: feat fix docs chore refactor test perf build ci style)"
+exit 1

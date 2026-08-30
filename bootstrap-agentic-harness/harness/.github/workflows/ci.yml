@@ -1,0 +1,22 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+jobs:
+  harness:
+    name: harness sensors
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh scripts/hooks/* || true
+      - name: Standard sensor tier
+        run: ./scripts/run-sensors.sh standard
+        # Stack lint/test sensors auto-detect the toolchain. Add setup steps
+        # (actions/setup-node, setup-java, setup-python, setup-go...) above this
+        # step once the project has a real stack so those sensors run instead of SKIP.

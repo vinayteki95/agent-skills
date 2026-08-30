@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Warn-only by default; set {{STRICT_ENV}}=1 to block on the standard tier.
+ROOT="$(git rev-parse --show-toplevel)"
+"$ROOT/scripts/check-branch-name.sh" || exit 1
+STRICT_VAR="{{STRICT_ENV}}"
+if [[ "${!STRICT_VAR:-0}" == "1" ]]; then
+  exec "$ROOT/scripts/run-sensors.sh" standard
+else
+  echo "pre-push: running standard sensors (warn-only). Set {{STRICT_ENV}}=1 to block."
+  "$ROOT/scripts/run-sensors.sh" standard || true
+fi
